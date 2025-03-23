@@ -1,7 +1,5 @@
 import { parse } from "yaml";
-import { z } from "zod";
 import { readFile, writeFile, mkdir } from "fs/promises";
-import { resolve } from "path";
 
 async function main() {
   // OpenAPI定義を読み込む

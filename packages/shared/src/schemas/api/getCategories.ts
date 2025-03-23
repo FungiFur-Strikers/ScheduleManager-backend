@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { schemas } from '../index';
+import { z } from "zod";
+import { CategorySchema, PaginationMetaSchema } from "../index";
 
 export const getCategoriesResponseSchema = z.object({
   data: z.array(CategorySchema).optional(),
@@ -9,9 +9,10 @@ export const getCategoriesResponseSchema = z.object({
 export type getCategoriesResponse = z.infer<typeof getCategoriesResponseSchema>;
 
 export const getCategoriesQueryParamsSchema = z.object({
-  page: z.number().int().optional(),
-  limit: z.number().int().optional(),
+  page: z.string().optional(),
+  limit: z.string().optional(),
 });
 
-export type getCategoriesQueryParams = z.infer<typeof getCategoriesQueryParamsSchema>;
-
+export type getCategoriesQueryParams = z.infer<
+  typeof getCategoriesQueryParamsSchema
+>;

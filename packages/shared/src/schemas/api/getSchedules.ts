@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { schemas } from '../index';
+import { z } from "zod";
+import { PaginationMetaSchema, ScheduleSchema } from "../index";
 
 export const getSchedulesResponseSchema = z.object({
   data: z.array(ScheduleSchema).optional(),
@@ -20,5 +20,6 @@ export const getSchedulesQueryParamsSchema = z.object({
   limit: z.number().int().optional(),
 });
 
-export type getSchedulesQueryParams = z.infer<typeof getSchedulesQueryParamsSchema>;
-
+export type getSchedulesQueryParams = z.infer<
+  typeof getSchedulesQueryParamsSchema
+>;
