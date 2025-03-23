@@ -48,10 +48,14 @@ app.post("/signin", zValidator("json", signInRequestSchema), async (c) => {
   }
 
   // JWTトークンの生成
-  const token = await generateToken({
-    userId: user.id,
-    username: user.username,
-  });
+  const token = await generateToken(
+    {
+      userId: user.id,
+      username: user.username,
+    },
+    "1h",
+    c.env.JWT_SECRET
+  );
 
   const refreshToken = generateRefreshToken(); // TODO: リフレッシュトークンの保存
 
@@ -77,10 +81,14 @@ app.post("/signup", zValidator("json", signUpRequestSchema), async (c) => {
     password: body.password, // TODO: パスワードのハッシュ化
   });
 
-  const token = await generateToken({
-    userId: result.meta.last_row_id,
-    username: body.username,
-  });
+  const token = await generateToken(
+    {
+      userId: result.meta.last_row_id,
+      username: body.username,
+    },
+    "1h",
+    c.env.JWT_SECRET
+  );
 
   const refreshToken = generateRefreshToken(); // TODO: リフレッシュトークンの保存
   return c.json({
@@ -113,10 +121,14 @@ app.post(
       return c.json({ error: "Invalid refresh token" }, 401);
     }
 
-    const token = await generateToken({
-      userId: user.id,
-      username: user.username,
-    });
+    const token = await generateToken(
+      {
+        userId: user.id,
+        username: user.username,
+      },
+      "1h",
+      c.env.JWT_SECRET
+    );
 
     const refreshToken = generateRefreshToken(); // TODO: リフレッシュトークンの保存
 

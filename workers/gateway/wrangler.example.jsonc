@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gateway-service",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-21",
+  "vars": {
+    "JWT_SECRET": "secret"
+  },
+  "services": [
+    { "binding": "AUTH_SERVICE", "service": "auth-service" },
+    { "binding": "BOOKS_SERVICE", "service": "books-service" }
+  ],
+
+} 

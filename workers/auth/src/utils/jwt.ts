@@ -2,26 +2,30 @@
 import { SignJWT, jwtVerify } from "jose";
 
 // 環境変数または Workers Secrets からの秘密鍵（32バイト以上推奨）
-const getJwtSecret = () => {
+const getJwtSecret = (secret: string) => {
   // 実際のプロジェクトでは環境変数から取得
-  return new TextEncoder().encode("your-secret-key-here-replace-in-production");
+  return new TextEncoder().encode(secret);
 };
 
 // JWTトークンの発行
-export async function generateToken(payload: any, expiresIn: string = "1h") {
+export async function generateToken(
+  payload: any,
+  expiresIn: string = "1h",
+  secret: string
+) {
   const jwt = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(expiresIn)
-    .sign(getJwtSecret());
+    .sign(getJwtSecret(secret));
 
   return jwt;
 }
 
 // JWTトークンの検証
-export async function verifyToken(token: string) {
+export async function verifyToken(token: string, secret: string) {
   try {
-    const { payload } = await jwtVerify(token, getJwtSecret());
+    const { payload } = await jwtVerify(token, getJwtSecret(secret));
     return { valid: true, payload };
   } catch (error) {
     return { valid: false, error };

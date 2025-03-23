@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:9998/books
+# トークンの取得方法:
+# 1. auth.httpを使ってログイン (POST /auth/signin)
+# 2. レスポンスからtokenをコピーして以下の変数に設定
+@token = eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjE3NDI3Mzg4ODAsImV4cCI6MTc0Mjc0MjQ4MH0.LKU2I4qRjGyGlDi6wejQrjK-AZZQ1RiLGQzSVE49zI4
+
+### スケジュール帳一覧取得
+GET {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### スケジュール帳一覧取得（ページングあり）
+GET {{baseUrl}}?page=1&limit=10
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### スケジュール帳作成
+POST {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "新しいスケジュール帳"
+}
+
+### スケジュール帳詳細取得
+GET {{baseUrl}}/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### スケジュール帳更新
+PUT {{baseUrl}}/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "更新されたスケジュール帳"
+}
+
+### スケジュール帳削除
+# レスポンスステータス: 204 No Content
+DELETE {{baseUrl}}/1
+Content-Type: application/json
+Authorization: Bearer {{token}} 

@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 type Bindings = {
   JWT_SECRET: string;
   AUTH_SERVICE: Service;
+  BOOKS_SERVICE: Service;
 };
 
 type JwtPayload = {
@@ -74,6 +75,17 @@ app.get("/auth", async (c) => {
   const res = await c.env.AUTH_SERVICE.fetch(c.req.raw);
   const text = await res.text();
   return c.text(text);
+});
+
+// books サービスへのルーティング
+app.all("/books/*", async (c) => {
+  const res = await c.env.BOOKS_SERVICE.fetch(c.req.raw);
+  return res;
+});
+
+app.all("/books", async (c) => {
+  const res = await c.env.BOOKS_SERVICE.fetch(c.req.raw);
+  return res;
 });
 
 export default app;
