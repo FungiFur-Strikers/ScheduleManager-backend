@@ -1,7 +1,12 @@
 import { Context } from "hono";
 import { eq, and } from "drizzle-orm";
 import { books } from "../../schema";
-import { getDb, getCurrentTimestamp, getUserIdFromRequest } from "../utils/db";
+import {
+  getDb,
+  getCurrentTimestamp,
+  getUserIdFromRequest,
+  getUsernameFromRequest,
+} from "../utils/db";
 import { createBookResponse } from "@project/shared/schemas/api/createBook";
 import { getBooksResponse } from "@project/shared/schemas/api/getBooks";
 import { getBookByIdResponse } from "@project/shared/schemas/api/getBookById";
@@ -13,8 +18,8 @@ export const createBook = async (c: Context) => {
   const db = getDb(c.env.DB);
   const body = await c.req.json();
 
-  const authHeader = c.req.header("Authorization");
-  const userId = getUserIdFromRequest(authHeader);
+  const userId = getUserIdFromRequest(c.req.raw);
+  const username = getUsernameFromRequest(c.req.raw);
 
   const now = getCurrentTimestamp();
 
@@ -63,8 +68,7 @@ export const updateBook = async (c: Context) => {
     return c.json({ error: "Invalid book ID" }, 400);
   }
 
-  const authHeader = c.req.header("Authorization");
-  const userId = getUserIdFromRequest(authHeader);
+  const userId = getUserIdFromRequest(c.req.raw);
 
   try {
     // 対象のスケジュール帳を取得
@@ -127,8 +131,7 @@ export const deleteBook = async (c: Context) => {
     return c.json({ error: "Invalid book ID" }, 400);
   }
 
-  const authHeader = c.req.header("Authorization");
-  const userId = getUserIdFromRequest(authHeader);
+  const userId = getUserIdFromRequest(c.req.raw);
 
   try {
     // 対象のスケジュール帳を取得
@@ -176,8 +179,7 @@ export const getBooks = async (c: Context) => {
   const limit = Number(c.req.query("limit")) || 10;
   const offset = (page - 1) * limit;
 
-  const authHeader = c.req.header("Authorization");
-  const userId = getUserIdFromRequest(authHeader);
+  const userId = getUserIdFromRequest(c.req.raw);
 
   try {
     // 総件数の取得
@@ -233,8 +235,7 @@ export const getBookById = async (c: Context) => {
     return c.json({ error: "Invalid book ID" }, 400);
   }
 
-  const authHeader = c.req.header("Authorization");
-  const userId = getUserIdFromRequest(authHeader);
+  const userId = getUserIdFromRequest(c.req.raw);
 
   try {
     const [book] = await db

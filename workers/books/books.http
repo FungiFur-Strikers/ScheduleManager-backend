@@ -4,20 +4,30 @@
 # 2. レスポンスからtokenをコピーして以下の変数に設定
 @token = eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjE3NDI3Mzg4ODAsImV4cCI6MTc0Mjc0MjQ4MH0.LKU2I4qRjGyGlDi6wejQrjK-AZZQ1RiLGQzSVE49zI4
 
+# ユーザー情報（通常はゲートウェイによって設定される）
+@userId = 1
+@username = testuser
+
 ### スケジュール帳一覧取得
 GET {{baseUrl}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
 
 ### スケジュール帳一覧取得（ページングあり）
 GET {{baseUrl}}?page=1&limit=10
 Content-Type: application/json
 Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
 
 ### スケジュール帳作成
 POST {{baseUrl}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
 
 {
     "name": "新しいスケジュール帳"
@@ -27,11 +37,15 @@ Authorization: Bearer {{token}}
 GET {{baseUrl}}/1
 Content-Type: application/json
 Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
 
 ### スケジュール帳更新
 PUT {{baseUrl}}/1
 Content-Type: application/json
 Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
 
 {
     "name": "更新されたスケジュール帳"
@@ -41,4 +55,6 @@ Authorization: Bearer {{token}}
 # レスポンスステータス: 204 No Content
 DELETE {{baseUrl}}/1
 Content-Type: application/json
-Authorization: Bearer {{token}} 
+Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}} 
