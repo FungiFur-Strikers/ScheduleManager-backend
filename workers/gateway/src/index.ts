@@ -142,10 +142,25 @@ app.get("/", async (c) => {
 });
 
 // 認証サービスへの転送
+app.all("/auth/*", async (c) => {
+  const res = await c.env.AUTH_SERVICE.fetch(c.req.raw);
+  const text = await res.text();
+  return c.text(text);
+});
+
 app.get("/auth", async (c) => {
   const res = await c.env.AUTH_SERVICE.fetch(c.req.raw);
   const text = await res.text();
   return c.text(text);
+});
+
+// usersサービスへのルーティング
+app.all("/users/*", async (c) => {
+  return await forwardRequestToService(c, c.env.AUTH_SERVICE);
+});
+
+app.get("/users", async (c) => {
+  return await forwardRequestToService(c, c.env.AUTH_SERVICE);
 });
 
 // booksサービスへのルーティング
