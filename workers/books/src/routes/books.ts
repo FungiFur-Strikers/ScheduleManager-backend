@@ -4,6 +4,7 @@ import { createBookRequestSchema } from "@project/shared/schemas/api/createBook"
 import { getBooksQueryParamsSchema } from "@project/shared/schemas/api/getBooks";
 import { updateBookRequestSchema } from "@project/shared/schemas/api/updateBook";
 import * as booksController from "../controllers/books";
+import categoriesRoutes from "./categories";
 
 // Bindingsの型を定義
 type Bindings = {
@@ -37,5 +38,8 @@ app.put("/:bookId", zValidator("json", updateBookRequestSchema), async (c) => {
 app.delete("/:bookId", async (c) => {
   return await booksController.deleteBook(c);
 });
+
+// カテゴリ関連のルートをマウント
+app.route("/:bookId/categories", categoriesRoutes);
 
 export default app;
