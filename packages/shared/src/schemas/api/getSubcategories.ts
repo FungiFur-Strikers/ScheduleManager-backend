@@ -11,8 +11,8 @@ export type getSubcategoriesResponse = z.infer<
 >;
 
 export const getSubcategoriesQueryParamsSchema = z.object({
-  page: z.number().int().optional(),
-  limit: z.number().int().optional(),
+  page: z.string().optional(),
+  limit: z.string().optional(),
 });
 
 export type getSubcategoriesQueryParams = z.infer<

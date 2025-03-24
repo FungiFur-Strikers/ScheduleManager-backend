@@ -4,6 +4,7 @@ import { createCategoryRequestSchema } from "@project/shared/schemas/api/createC
 import { getCategoriesQueryParamsSchema } from "@project/shared/schemas/api/getCategories";
 import { updateCategoryRequestSchema } from "@project/shared/schemas/api/updateCategory";
 import * as categoriesController from "../controllers/categories";
+import subcategoriesRoutes from "./subcategories";
 
 // Bindingsの型を定義
 type Bindings = {
@@ -41,5 +42,8 @@ app.put(
 app.delete("/:categoryId", async (c) => {
   return await categoriesController.deleteCategory(c);
 });
+
+// サブカテゴリ関連のルートをマウント
+app.route("/:categoryId/subcategories", subcategoriesRoutes);
 
 export default app;
