@@ -31,9 +31,18 @@ bun run deploy
 
 ## スクリプト
 
+### ルートのpackage.json
+- `bun run generate` - OpenAPI定義からTypeScriptの型定義を生成
+- `bun run build` - 全ワークスペースのビルドを並列実行
+- `bun run deploy` - ビルド後、Cloudflare Workersにデプロイ
+
+### workersのスクリプト
 - `bun run dev` - 開発サーバーの起動
 - `bun run deploy` - Cloudflare Workersへのデプロイ
 - `bun run lint` - コードのリント
 - `bun run format` - コードのフォーマット
 - `bun run test` - テストの実行
 - `bun run test:watch` - テストの監視モード実行
+- `bun run generate` - Drizzle ORMのスキーマ生成（auth worker）
+- `bun run local:migration` - ローカル環境でのマイグレーション実行（auth worker）
+- `bun run remote:migration` - リモート環境でのマイグレーション実行（auth worker）

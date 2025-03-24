@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "auth",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-21",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "d1-books",
+      "database_id": "your-database-id-here",
+      "migrations_dir": "drizzle"
+    }
+  ]
+} 
