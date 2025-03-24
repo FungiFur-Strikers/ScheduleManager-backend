@@ -1,0 +1,63 @@
+@baseUrl = http://localhost:9998/books
+# トークンの取得方法:
+# 1. auth.httpを使ってログイン (POST /auth/signin)
+# 2. レスポンスからtokenをコピーして以下の変数に設定
+@token = eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjE3NDI3Mzg4ODAsImV4cCI6MTc0Mjc0MjQ4MH0.LKU2I4qRjGyGlDi6wejQrjK-AZZQ1RiLGQzSVE49zI4
+
+# ユーザー情報（通常はゲートウェイによって設定される）
+@userId = 1
+@username = testuser
+@bookId = 1
+
+### カテゴリ一覧取得
+GET {{baseUrl}}/{{bookId}}/categories
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### カテゴリ一覧取得（ページングあり）
+GET {{baseUrl}}/{{bookId}}/categories?page=1&limit=20
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### カテゴリ作成
+POST {{baseUrl}}/{{bookId}}/categories
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+    "categoryName": "新しいカテゴリ",
+    "incomeFlg": false
+}
+
+### カテゴリ詳細取得
+GET {{baseUrl}}/{{bookId}}/categories/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### カテゴリ更新
+PUT {{baseUrl}}/{{bookId}}/categories/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+    "categoryName": "更新されたカテゴリ",
+    "incomeFlg": true
+}
+
+### カテゴリ削除
+# レスポンスステータス: 204 No Content
+DELETE {{baseUrl}}/{{bookId}}/categories/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-User-ID: {{userId}}
+X-Username: {{username}} 
