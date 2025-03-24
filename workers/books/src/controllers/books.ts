@@ -54,7 +54,7 @@ export const createBook = async (c: Context) => {
     );
   } catch (error) {
     console.error("Error creating book:", error);
-    return c.json({ error: "Failed to create book" }, 500);
+return c.json({ error: "スケジュール帳の作成に失敗しました" }, 500);
   }
 };
 
