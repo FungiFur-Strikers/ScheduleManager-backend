@@ -1,0 +1,15 @@
+@baseUrl = http://localhost:8787
+# トークンの取得方法:
+# 1. auth.httpを使ってログイン (POST /auth/signin)
+# 2. レスポンスからtokenをコピーして以下の変数に設定
+@token = eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjE3NDI3Mzg4ODAsImV4cCI6MTc0Mjc0MjQ4MH0.LKU2I4qRjGyGlDi6wejQrjK-AZZQ1RiLGQzSVE49zI4
+
+### ヘルスチェック - ゲートウェイ
+# ユーザー認証情報付きのレスポンスを返す
+GET {{baseUrl}}/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### ヘルスチェック - 認証サービス
+GET {{baseUrl}}/auth
+Content-Type: application/json

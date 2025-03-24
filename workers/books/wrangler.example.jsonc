@@ -1,8 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "auth-service",
+  "name": "books-service",
   "main": "src/index.ts",
   "compatibility_date": "2025-03-21",
+  "dev": {
+    "port": 9998
+  },
   "vars": {
     "JWT_SECRET": "your-secret-key-here-replace-in-production"
   },

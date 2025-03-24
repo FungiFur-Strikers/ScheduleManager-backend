@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { schemas } from '../index';
+import { z } from "zod";
+import { PaginationMetaSchema, WorkSchema } from "../index";
 
 export const getWorksResponseSchema = z.object({
   data: z.array(WorkSchema).optional(),
@@ -21,4 +21,3 @@ export const getWorksQueryParamsSchema = z.object({
 });
 
 export type getWorksQueryParams = z.infer<typeof getWorksQueryParamsSchema>;
-
