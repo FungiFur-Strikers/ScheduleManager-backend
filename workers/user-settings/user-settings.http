@@ -1,0 +1,33 @@
+@baseUrl = http://localhost:9996/user-settings
+@userId = 1
+@username = testuser
+
+### ユーザー設定作成
+POST {{baseUrl}}
+content-type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+  "theme": "light",
+  "notificationEnabled": true,
+  "language": "ja"
+}
+
+### ユーザー設定取得
+GET {{baseUrl}}
+content-type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### ユーザー設定更新
+PUT {{baseUrl}}
+content-type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+  "theme": "dark",
+  "notificationEnabled": true,
+  "language": "ja"
+} 
