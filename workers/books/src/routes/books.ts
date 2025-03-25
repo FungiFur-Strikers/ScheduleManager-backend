@@ -6,11 +6,11 @@ import { updateBookRequestSchema } from "@project/shared/schemas/api/updateBook"
 import * as booksController from "../controllers/books";
 import categoriesRoutes from "./categories";
 import schedulesRoutes from "./schedules";
+import worksRoutes from "./works";
 
 // Bindingsの型を定義
 type Bindings = {
   DB: D1Database;
-  JWT_SECRET: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -45,5 +45,8 @@ app.route("/:bookId/categories", categoriesRoutes);
 
 // スケジュール関連のルートをマウント
 app.route("/:bookId/schedules", schedulesRoutes);
+
+// 案件関連のルートをマウント
+app.route("/:bookId/works", worksRoutes);
 
 export default app;
