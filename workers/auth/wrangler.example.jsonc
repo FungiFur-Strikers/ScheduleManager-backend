@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "auth-service",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-21",
+  "vars": {
+    "JWT_SECRET": "your-secret-key-here-replace-in-production"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "d1-books",
+      "database_id": "your-database-id-here",
+      "migrations_dir": "drizzle"
+    }
+  ]
+} 

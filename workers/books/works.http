@@ -1,0 +1,70 @@
+@baseUrl = http://localhost:9998/books
+# トークンの取得方法:
+# 1. auth.httpを使ってログイン (POST /auth/signin)
+# 2. レスポンスからtokenをコピーして以下の変数に設定
+
+# ユーザー情報（通常はゲートウェイによって設定される）
+@userId = 1
+@username = testuser
+@bookId = 1
+
+### 案件一覧取得（ダイレクトアクセス用）
+GET {{baseUrl}}/{{bookId}}/works
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### 案件一覧取得（フィルタリングあり）
+GET {{baseUrl}}/{{bookId}}/works?company=テスト会社&minHourlyPay=2000&maxHourlyPay=5000
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### 案件一覧取得（ページングあり）
+GET {{baseUrl}}/{{bookId}}/works?page=1&limit=10
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### 案件作成
+POST {{baseUrl}}/{{bookId}}/works
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+    "workName": "テスト案件",
+    "hourlyPay": 3000,
+    "unitPrice": 500000,
+    "company": "テスト会社",
+    "agent": "テストエージェント",
+    "remarks": "備考欄のテキスト"
+}
+
+### 案件詳細取得
+GET {{baseUrl}}/{{bookId}}/works/1
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### 案件更新
+PUT {{baseUrl}}/{{bookId}}/works/1
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+    "workName": "更新されたテスト案件",
+    "hourlyPay": 3500,
+    "unitPrice": 550000,
+    "company": "更新されたテスト会社",
+    "agent": "更新されたテストエージェント",
+    "remarks": "更新された備考欄のテキスト"
+}
+
+### 案件削除
+# レスポンスステータス: 204 No Content
+DELETE {{baseUrl}}/{{bookId}}/works/1
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}} 

@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:9999/auth
+
+### ユーザー登録
+POST {{baseUrl}}/signup
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "email": "john@example.com",
+    "password": "password123"
+} 
+
+
+
+### ログイン
+POST {{baseUrl}}/signin
+Content-Type: application/json
+
+{
+    "email": "john@example.com",
+    "password": "password123"   
+} 
+
+### リフレッシュトークンの生成
+POST {{baseUrl}}/refresh-token
+Content-Type: application/json
+
+{
+    "refreshToken": "your_refresh_token_here"
+}
+
+### サインアウト
+POST {{baseUrl}}/signout
+

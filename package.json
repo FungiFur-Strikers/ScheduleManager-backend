@@ -1,19 +1,25 @@
 {
-  "name": "ScheduleManager-backend",
+  "name": "schedule-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
-    "lint": "biome lint .",
-    "format": "biome format . --write",
-    "test": "bun test",
-    "test:watch": "bun test --watch"
+    "generate": "bunx openapi-typescript openapi.yml -o packages/shared/src/types/api.ts",
+    "build": "bun run --parallel build",
+    "deploy": "bun run build && wrangler publish"
   },
-  "dependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "hono": "^4.7.5"
-  },
+  "workspaces": [
+    "packages/*",
+    "workers/*"
+  ],
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250214.0",
-    "wrangler": "4.2.0"
+    "@hono/zod-openapi": "^0.19.2",
+    "@hono/zod-validator": "^0.4.3",
+    "bun": "^1.0.0",
+    "hono": "^4.7.5",
+    "openapi-typescript": "^7.6.1",
+    "typescript": "^5.8.2",
+    "wrangler": "^3.0.0",
+    "zod": "^3.24.2"
   }
 }

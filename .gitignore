@@ -85,3 +85,9 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Wrangler configuration
+wrangler.jsonc
+
+# Drizzle
+drizzle/
