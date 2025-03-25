@@ -1,0 +1,74 @@
+@baseUrl = http://localhost:9998/books
+# トークンの取得方法:
+# 1. auth.httpを使ってログイン (POST /auth/signin)
+# 2. レスポンスからtokenをコピーして以下の変数に設定
+
+# ユーザー情報（通常はゲートウェイによって設定される）
+@userId = 1
+@username = testuser
+@bookId = 3
+@noticeId = 1
+
+### お知らせ一覧取得（ダイレクトアクセス用）
+GET {{baseUrl}}/{{bookId}}/notices
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### お知らせ一覧取得（フィルタリングあり）
+GET {{baseUrl}}/{{bookId}}/notices?fromDate=2023-01-01&toDate=2023-12-31&unreadOnly=true
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### お知らせ一覧取得（ページングあり）
+GET {{baseUrl}}/{{bookId}}/notices?page=1&limit=10
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### お知らせ作成
+POST {{baseUrl}}/{{bookId}}/notices
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+  "date": "2023-05-15",
+  "disUserId": 1,
+  "disRole": "admin",
+  "remarks": "これは新しいお知らせです。"
+}
+
+### お知らせ詳細取得
+GET {{baseUrl}}/{{bookId}}/notices/{{noticeId}}
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### お知らせ更新
+PUT {{baseUrl}}/{{bookId}}/notices/{{noticeId}}
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+{
+  "date": "2023-05-16",
+  "disUserId": 1,
+  "disRole": "admin",
+  "remarks": "これは更新されたお知らせです。"
+}
+
+### お知らせ削除
+# レスポンスステータス: 204 No Content
+DELETE {{baseUrl}}/{{bookId}}/notices/{{noticeId}}
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}}
+
+### お知らせを既読にする
+# レスポンスステータス: 204 No Content
+POST {{baseUrl}}/{{bookId}}/notices/{{noticeId}}/read
+Content-Type: application/json
+X-User-ID: {{userId}}
+X-Username: {{username}} 
