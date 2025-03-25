@@ -7,6 +7,7 @@ import * as booksController from "../controllers/books";
 import categoriesRoutes from "./categories";
 import schedulesRoutes from "./schedules";
 import worksRoutes from "./works";
+import noticesRoutes from "./notices";
 
 // Bindingsの型を定義
 type Bindings = {
@@ -48,5 +49,8 @@ app.route("/:bookId/schedules", schedulesRoutes);
 
 // 案件関連のルートをマウント
 app.route("/:bookId/works", worksRoutes);
+
+// お知らせ関連のルートをマウント
+app.route("/:bookId/notices", noticesRoutes);
 
 export default app;
