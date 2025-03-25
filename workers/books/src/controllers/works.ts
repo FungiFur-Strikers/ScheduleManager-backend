@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { eq, and, like, gte, lte } from "drizzle-orm";
+import { eq, and, like, gte, lte, sql } from "drizzle-orm";
 import { works, books } from "../../schema";
 import {
   getDb,
@@ -288,13 +288,13 @@ export const getWorks = async (c: Context) => {
 
     // 検索条件がある場合は追加
     if (company) {
-      conditions.push(like(works.company, `%${company}%`));
+      conditions.push(sql`${works.company} LIKE ${"%" + company + "%"}`);
     }
     if (agent) {
-      conditions.push(like(works.agent, `%${agent}%`));
+      conditions.push(sql`${works.agent} LIKE ${"%" + agent + "%"}`);
     }
     if (workName) {
-      conditions.push(like(works.workName, `%${workName}%`));
+      conditions.push(sql`${works.workName} LIKE ${"%" + workName + "%"}`);
     }
     if (minHourlyPay !== undefined) {
       conditions.push(gte(works.hourlyPay, minHourlyPay));
