@@ -5,6 +5,7 @@ import { getBooksQueryParamsSchema } from "@project/shared/schemas/api/getBooks"
 import { updateBookRequestSchema } from "@project/shared/schemas/api/updateBook";
 import * as booksController from "../controllers/books";
 import categoriesRoutes from "./categories";
+import schedulesRoutes from "./schedules";
 
 // Bindingsの型を定義
 type Bindings = {
@@ -41,5 +42,8 @@ app.delete("/:bookId", async (c) => {
 
 // カテゴリ関連のルートをマウント
 app.route("/:bookId/categories", categoriesRoutes);
+
+// スケジュール関連のルートをマウント
+app.route("/:bookId/schedules", schedulesRoutes);
 
 export default app;
