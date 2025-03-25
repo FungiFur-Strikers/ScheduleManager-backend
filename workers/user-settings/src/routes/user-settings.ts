@@ -16,9 +16,13 @@ app.get("/", async (c) => {
 });
 
 // ユーザー設定作成
-app.post("/", async (c) => {
-  return await userSettingsController.createUserSettings(c);
-});
+app.post(
+  "/",
+  zValidator("json", updateUserSettingsRequestSchema),
+  async (c) => {
+    return await userSettingsController.createUserSettings(c);
+  }
+);
 
 // ユーザー設定更新
 app.put("/", zValidator("json", updateUserSettingsRequestSchema), async (c) => {
