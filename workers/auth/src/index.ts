@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { drizzle } from "drizzle-orm/d1";
-import { users } from "../schema";
 import { zValidator } from "@hono/zod-validator";
 import {
   signUpRequestSchema,
@@ -14,135 +13,169 @@ import {
   refreshTokenRequestSchema,
   refreshTokenResponse,
 } from "@project/shared/schemas/api/refreshToken";
-import { and, eq } from "drizzle-orm";
-import { generateRefreshToken, generateToken } from "./utils/jwt";
+import { userUpdateRequestSchema } from "@project/shared/schemas/api/userUpdate";
+import {
+  createRefreshToken,
+  revokeRefreshToken,
+  validateAndRefreshToken,
+} from "./utils/refreshToken";
+import { verifyPassword } from "./utils/password";
+import { AppContext, authMiddleware } from "./utils/auth";
+import { UserService } from "./utils/user";
 
-type Bindings = {
-  DB: D1Database;
-  JWT_SECRET: string;
-};
+const app = new Hono<AppContext>();
 
-const app = new Hono<{ Bindings: Bindings }>().basePath("/auth");
+// 認証関連のエンドポイント
+const authApp = new Hono<AppContext>();
 
-app.get("/", (c) => {
+authApp.get("/", (c) => {
   return c.text("Hello Hono!");
 });
 
-app.post("/signin", zValidator("json", signInRequestSchema), async (c) => {
+// 認証が必要なエンドポイントにミドルウェアを適用
+authApp.use("/signout", authMiddleware);
+authApp.use("/refresh-token", authMiddleware);
+
+authApp.post("/signin", zValidator("json", signInRequestSchema), async (c) => {
   const db = drizzle(c.env.DB);
+  const userService = new UserService(db);
   const body = c.req.valid("json");
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(and(eq(users.email, body.email)));
-
+  const user = await userService.findUserByEmail(body.email);
   if (!user) {
     return c.json({ error: "User not found" }, 401);
   }
 
-  // パスワードの検証
-  // TODO: パスワードのハッシュ化
-  if (user.password !== body.password) {
+  const isValidPassword = await verifyPassword(body.password, user.password);
+  if (!isValidPassword) {
     return c.json({ error: "Invalid password" }, 401);
   }
 
-  // JWTトークンの生成
-  const token = await generateToken(
-    {
-      userId: user.id,
-      username: user.username,
-    },
-    "1h",
-    c.env.JWT_SECRET
-  );
-
-  const refreshToken = generateRefreshToken(); // TODO: リフレッシュトークンの保存
-
-  return c.json({
-    token,
-    refreshToken,
-    user: {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-    },
-    expiresIn: 3600,
-  } as signInResponse);
+  try {
+    const result = await createRefreshToken(db, user.userId, c.env.JWT_SECRET);
+    return c.json(result as signInResponse);
+  } catch (error) {
+    return c.json({ error: "Failed to create refresh token" }, 500);
+  }
 });
 
-app.post("/signup", zValidator("json", signUpRequestSchema), async (c) => {
+authApp.post("/signup", zValidator("json", signUpRequestSchema), async (c) => {
   const db = drizzle(c.env.DB);
+  const userService = new UserService(db);
   const body = c.req.valid("json");
 
-  const result = await db.insert(users).values({
-    username: body.username,
-    email: body.email,
-    password: body.password, // TODO: パスワードのハッシュ化
-  });
+  const saltRounds = parseInt(c.env.SALT_ROUNDS, 10) || 10;
 
-  const token = await generateToken(
-    {
-      userId: result.meta.last_row_id,
-      username: body.username,
-    },
-    "1h",
-    c.env.JWT_SECRET
-  );
-
-  const refreshToken = generateRefreshToken(); // TODO: リフレッシュトークンの保存
-  return c.json({
-    token,
-    refreshToken,
-    user: {
-      id: result.meta.last_row_id,
+  try {
+    const user = await userService.createUser({
       username: body.username,
       email: body.email,
-    },
-    expiresIn: 3600,
-  } as signUpResponse);
+      password: body.password,
+      saltRounds,
+    });
+
+    const tokenResult = await createRefreshToken(
+      db,
+      user.userId,
+      c.env.JWT_SECRET
+    );
+    return c.json(tokenResult as signUpResponse);
+  } catch (error) {
+    return c.json({ error: "Failed to create user or refresh token" }, 500);
+  }
 });
 
-app.post("/signout", async (c) => {
-  // TODO: リフレッシュトークンをDBから削除
+authApp.post("/signout", async (c) => {
+  const db = drizzle(c.env.DB);
+  const refreshToken = c.req.header("X-Refresh-Token");
+  const jwtPayload = c.get("jwtPayload");
+
+  try {
+    await revokeRefreshToken(db, refreshToken || undefined, jwtPayload.userId);
+  } catch (error) {
+    // エラーは無視して204を返す
+  }
+
   return new Response(null, { status: 204 });
 });
 
-app.post(
+authApp.post(
   "/refresh-token",
   zValidator("json", refreshTokenRequestSchema),
   async (c) => {
     const db = drizzle(c.env.DB);
+    const body = c.req.valid("json");
 
-    // TODO: リフレッシュトークンの検証やDBとの照合を行う
-    const [user] = await db.select().from(users).where(eq(users.id, 1)); // TODO:リフレッシュトークンに紐づくユーザーを取得
-
-    if (!user) {
-      return c.json({ error: "Invalid refresh token" }, 401);
+    try {
+      const result = await validateAndRefreshToken(
+        db,
+        body.refreshToken,
+        c.env.JWT_SECRET
+      );
+      return c.json(result as refreshTokenResponse);
+    } catch (error) {
+      if (error instanceof Error) {
+        return c.json({ error: error.message }, 401);
+      }
+      return c.json({ error: "Failed to refresh token" }, 500);
     }
-
-    const token = await generateToken(
-      {
-        userId: user.id,
-        username: user.username,
-      },
-      "1h",
-      c.env.JWT_SECRET
-    );
-
-    const refreshToken = generateRefreshToken(); // TODO: リフレッシュトークンの保存
-
-    return c.json({
-      token,
-      refreshToken,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-      },
-      expiresIn: 3600,
-    } as refreshTokenResponse);
   }
 );
+
+// ユーザー関連のエンドポイント
+const usersApp = new Hono<AppContext>();
+
+// 認証が必要なエンドポイントにミドルウェアを適用
+usersApp.use("*", authMiddleware);
+
+usersApp.get("/me", async (c) => {
+  const db = drizzle(c.env.DB);
+  const userService = new UserService(db);
+  const jwtPayload = c.get("jwtPayload");
+
+  const user = await userService.findUserById(jwtPayload.userId);
+  if (!user) {
+    return c.json({ error: "User not found" }, 404);
+  }
+
+  return c.json({
+    userId: user.userId,
+    username: user.username,
+    email: user.email,
+    createdAt: user.createTime,
+    updatedAt: user.updateTime,
+    delFlg: user.delFlg,
+    updateCnt: user.updateCnt,
+    updateUserId: user.updateUserId,
+    createTime: user.createTime,
+    createUserId: user.createUserId,
+  });
+});
+
+usersApp.put("/me", zValidator("json", userUpdateRequestSchema), async (c) => {
+  const db = drizzle(c.env.DB);
+  const userService = new UserService(db);
+  const jwtPayload = c.get("jwtPayload");
+  const body = c.req.valid("json");
+
+  const existingUser = await userService.findUserById(jwtPayload.userId);
+  if (!existingUser) {
+    return c.json({ error: "User not found" }, 404);
+  }
+
+  const saltRounds = parseInt(c.env.SALT_ROUNDS, 10) || 10;
+  const updatedUser = await userService.updateUser(jwtPayload.userId, {
+    username: body.username,
+    email: body.email,
+    password: body.password,
+    saltRounds: body.password ? saltRounds : undefined,
+  });
+
+  return c.json(updatedUser);
+});
+
+// ルートアプリケーションにサブアプリケーションをマウント
+app.route("/auth", authApp);
+app.route("/users", usersApp);
 
 export default app;

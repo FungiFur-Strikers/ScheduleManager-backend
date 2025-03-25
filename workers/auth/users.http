@@ -1,0 +1,26 @@
+@baseUrl = http://localhost:9999/users
+@token = eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjE3NDI4MjM5ODYsImV4cCI6MTc0MjgyNzU4Nn0.IxJgH0itS3MXxL8cjSL3_YvG4TdikRA6BoL-lCmJfLY
+### 自分のユーザー情報を取得
+GET {{baseUrl}}/me
+Authorization: Bearer {{token}}
+
+### 自分のユーザー情報を更新（パスワードなし）
+PUT {{baseUrl}}/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "username": "updatedusername",
+    "email": "updated@example.com"
+}
+
+### 自分のユーザー情報を更新（パスワードあり）
+PUT {{baseUrl}}/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "username": "updatedusername",
+    "email": "updated@example.com",
+    "password": "newpassword123"
+} 
