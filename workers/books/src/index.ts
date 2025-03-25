@@ -3,7 +3,6 @@ import booksRoutes from "./routes/books";
 
 type Bindings = {
   DB: D1Database;
-  JWT_SECRET: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();

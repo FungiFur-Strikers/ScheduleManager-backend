@@ -8,24 +8,21 @@
 @userId = 1
 @username = testuser
 
-### スケジュール帳一覧取得
+### スケジュール帳一覧取得（ダイレクトアクセス用）
 GET {{baseUrl}}
 Content-Type: application/json
-Authorization: Bearer {{token}}
 X-User-ID: {{userId}}
 X-Username: {{username}}
 
 ### スケジュール帳一覧取得（ページングあり）
 GET {{baseUrl}}?page=1&limit=10
 Content-Type: application/json
-Authorization: Bearer {{token}}
 X-User-ID: {{userId}}
 X-Username: {{username}}
 
 ### スケジュール帳作成
 POST {{baseUrl}}
 Content-Type: application/json
-Authorization: Bearer {{token}}
 X-User-ID: {{userId}}
 X-Username: {{username}}
 
@@ -36,14 +33,12 @@ X-Username: {{username}}
 ### スケジュール帳詳細取得
 GET {{baseUrl}}/1
 Content-Type: application/json
-Authorization: Bearer {{token}}
 X-User-ID: {{userId}}
 X-Username: {{username}}
 
 ### スケジュール帳更新
 PUT {{baseUrl}}/1
 Content-Type: application/json
-Authorization: Bearer {{token}}
 X-User-ID: {{userId}}
 X-Username: {{username}}
 
@@ -55,6 +50,5 @@ X-Username: {{username}}
 # レスポンスステータス: 204 No Content
 DELETE {{baseUrl}}/1
 Content-Type: application/json
-Authorization: Bearer {{token}}
 X-User-ID: {{userId}}
 X-Username: {{username}} 

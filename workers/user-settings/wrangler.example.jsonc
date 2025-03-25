@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "user-settings-service",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-24",
+  "dev": {
+    "port": 9996
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "d1-user-settings",
+      "database_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}

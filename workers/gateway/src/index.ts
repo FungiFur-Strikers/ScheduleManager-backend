@@ -7,6 +7,7 @@ type Bindings = {
   JWT_SECRET: string;
   AUTH_SERVICE: Service;
   BOOKS_SERVICE: Service;
+  USER_SETTINGS_SERVICE: Service;
 };
 
 type JwtPayload = {
@@ -123,7 +124,7 @@ const authMiddleware = async (c: Context<AppContext>, next: Next) => {
 // 認証が必要なパスに認証ミドルウェアを適用
 app.use("/", authMiddleware);
 app.use("/users/*", authMiddleware);
-app.use("/books", authMiddleware);
+app.use("/user-settings/*", authMiddleware);
 app.use("/books/*", authMiddleware);
 
 // ヘルスチェックエンドポイント（ルートパス）
@@ -148,7 +149,7 @@ app.all("/auth/*", async (c) => {
   return c.text(text);
 });
 
-app.get("/auth", async (c) => {
+app.all("/auth", async (c) => {
   const res = await c.env.AUTH_SERVICE.fetch(c.req.raw);
   const text = await res.text();
   return c.text(text);
@@ -159,16 +160,21 @@ app.all("/users/*", async (c) => {
   return await forwardRequestToService(c, c.env.AUTH_SERVICE);
 });
 
-app.get("/users", async (c) => {
+app.all("/users", async (c) => {
   return await forwardRequestToService(c, c.env.AUTH_SERVICE);
+});
+
+// user-settingsサービスへのルーティング
+app.all("/user-settings/*", async (c) => {
+  return await forwardRequestToService(c, c.env.USER_SETTINGS_SERVICE);
+});
+
+app.all("/user-settings", async (c) => {
+  return await forwardRequestToService(c, c.env.USER_SETTINGS_SERVICE);
 });
 
 // booksサービスへのルーティング
 app.all("/books/*", async (c) => {
-  return await forwardRequestToService(c, c.env.BOOKS_SERVICE);
-});
-
-app.all("/books", async (c) => {
   return await forwardRequestToService(c, c.env.BOOKS_SERVICE);
 });
 

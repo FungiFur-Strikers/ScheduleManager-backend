@@ -8,7 +8,7 @@
   },
   "services": [
     { "binding": "AUTH_SERVICE", "service": "auth-service" },
-    { "binding": "BOOKS_SERVICE", "service": "books-service" }
-  ],
-
+    { "binding": "BOOKS_SERVICE", "service": "books-service" },
+    { "binding": "USER_SETTINGS_SERVICE", "service": "user-settings-service" }
+  ]
 } 
