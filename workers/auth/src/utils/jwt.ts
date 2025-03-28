@@ -1,5 +1,6 @@
 // packages/workers/auth/src/utils/jwt.ts
-import { SignJWT, jwtVerify } from "jose";
+import { verifyJwtToken } from "@worker/common";
+import { SignJWT } from "jose";
 
 // 環境変数または Workers Secrets からの秘密鍵（32バイト以上推奨）
 const getJwtSecret = (secret: string) => {
@@ -22,15 +23,8 @@ export async function generateToken(
   return jwt;
 }
 
-// JWTトークンの検証
-export async function verifyToken(token: string, secret: string) {
-  try {
-    const { payload } = await jwtVerify(token, getJwtSecret(secret));
-    return { valid: true, payload };
-  } catch (error) {
-    return { valid: false, error };
-  }
-}
+// JWTトークンの検証は共通モジュールから再エクスポート
+export { verifyJwtToken as verifyToken };
 
 // リフレッシュトークンの生成
 export function generateRefreshToken() {

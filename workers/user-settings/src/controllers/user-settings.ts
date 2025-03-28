@@ -1,14 +1,18 @@
 import { Context } from "hono";
 import { eq } from "drizzle-orm";
 import { userSettings } from "../../schema";
-import { getDb, getCurrentTimestamp, getUserIdFromRequest } from "../utils/db";
+import { getDb, getCurrentTimestamp } from "@worker/common";
 import { getUserSettingsResponse } from "@project/shared/schemas/api/getUserSettings";
 import { updateUserSettingsResponse } from "@project/shared/schemas/api/updateUserSettings";
 
 // ユーザー設定取得
 export const getUserSettings = async (c: Context) => {
   const db = getDb(c.env.DB);
-  const userId = getUserIdFromRequest(c.req.raw);
+  const userId = c.get("userId");
+
+  if (!userId) {
+    return c.json({ error: "ユーザーIDが見つかりません" }, 401);
+  }
 
   try {
     // ユーザー設定の取得
@@ -44,7 +48,11 @@ export const getUserSettings = async (c: Context) => {
 export const updateUserSettings = async (c: Context) => {
   const db = getDb(c.env.DB);
   const body = await c.req.json();
-  const userId = getUserIdFromRequest(c.req.raw);
+  const userId = c.get("userId");
+
+  if (!userId) {
+    return c.json({ error: "ユーザーIDが見つかりません" }, 401);
+  }
 
   try {
     // 既存の設定を取得
@@ -114,7 +122,11 @@ export const updateUserSettings = async (c: Context) => {
 export const createUserSettings = async (c: Context) => {
   const db = getDb(c.env.DB);
   const body = await c.req.json();
-  const userId = getUserIdFromRequest(c.req.raw);
+  const userId = c.get("userId");
+
+  if (!userId) {
+    return c.json({ error: "ユーザーIDが見つかりません" }, 401);
+  }
 
   try {
     // すでに設定が存在するか確認
@@ -130,7 +142,7 @@ export const createUserSettings = async (c: Context) => {
     const now = getCurrentTimestamp();
 
     // 新しい設定の作成
-    const result = await db.insert(userSettings).values({
+    await db.insert(userSettings).values({
       userId,
       theme: body.theme || "light",
       notificationEnabled: body.notificationEnabled ? 1 : 0,

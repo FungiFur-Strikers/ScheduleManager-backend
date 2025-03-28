@@ -9,15 +9,15 @@ export const getSchedulesResponseSchema = z.object({
 export type getSchedulesResponse = z.infer<typeof getSchedulesResponseSchema>;
 
 export const getSchedulesQueryParamsSchema = z.object({
-  categoryId: z.number().int().optional(),
-  subcategoryId: z.number().int().optional(),
+  categoryId: z.string().optional(),
+  subcategoryId: z.string().optional(),
   startFrom: z.string().datetime().optional(),
   startTo: z.string().datetime().optional(),
   endFrom: z.string().datetime().optional(),
   endTo: z.string().datetime().optional(),
   title: z.string().optional(),
-  page: z.number().int().optional(),
-  limit: z.number().int().optional(),
+  page: z.string().optional(),
+  limit: z.string().optional(),
 });
 
 export type getSchedulesQueryParams = z.infer<

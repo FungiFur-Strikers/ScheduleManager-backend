@@ -3,7 +3,7 @@
     "target": "ES2020",
     "module": "ESNext",
     "lib": ["ES2020"],
-    "types": ["@cloudflare/workers-types", "bun-types"],
+    "types": ["@cloudflare/workers-types"],
     "moduleResolution": "node",
     "strict": true,
     "noImplicitAny": true,
@@ -17,12 +17,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "declaration": true,
+    "outDir": "./dist",
     "paths": {
-      "@worker/common": ["../common/src"],
-      "@worker/common/*": ["../common/src/*"],
       "@project/shared": ["../../packages/shared/src"],
       "@project/shared/*": ["../../packages/shared/src/*"]
-    },
+    }
   },
-  "include": ["src", "schema.ts"]
-}
+  "include": ["src/**/*"]
+} 

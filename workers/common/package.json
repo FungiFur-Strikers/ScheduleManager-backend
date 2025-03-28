@@ -1,0 +1,23 @@
+{
+    "name": "@worker/common",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {
+        "lint": "eslint --ext .ts,.tsx ."
+    },
+    "dependencies": {
+        "hono": "^4.7.5",
+        "drizzle-orm": "^0.41.0"
+    },
+    "peerDependencies": {
+        "@cloudflare/workers-types": "^4.20230904.0",
+        "drizzle-orm": "^0.41.0"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20230904.0",
+        "typescript": "^5.0.4"
+    }
+}

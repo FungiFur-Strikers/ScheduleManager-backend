@@ -26,7 +26,7 @@ POST {{baseUrl}}/refresh-token
 Content-Type: application/json
 
 {
-    "refreshToken": "your_refresh_token_here"
+    "refreshToken": "b60aeebb03c1bbd0ee09eb599e0040f279ecaa528d42212375662a11aa533466"
 }
 
 ### サインアウト

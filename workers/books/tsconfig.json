@@ -12,6 +12,8 @@
       "@cloudflare/workers-types/2023-07-01"
     ],
     "paths": {
+      "@worker/common": ["../common/src"],
+      "@worker/common/*": ["../common/src/*"],
       "@project/shared": ["../../packages/shared/src"],
       "@project/shared/*": ["../../packages/shared/src/*"]
     },

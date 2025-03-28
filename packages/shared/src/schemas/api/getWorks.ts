@@ -16,8 +16,8 @@ export const getWorksQueryParamsSchema = z.object({
   maxHourlyPay: z.number().optional(),
   minUnitPrice: z.number().optional(),
   maxUnitPrice: z.number().optional(),
-  page: z.number().int().optional(),
-  limit: z.number().int().optional(),
+  page: z.string().optional(),
+  limit: z.string().optional(),
 });
 
 export type getWorksQueryParams = z.infer<typeof getWorksQueryParamsSchema>;

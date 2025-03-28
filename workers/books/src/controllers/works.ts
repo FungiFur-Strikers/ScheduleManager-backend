@@ -1,12 +1,7 @@
 import { Context } from "hono";
-import { eq, and, like, gte, lte, sql } from "drizzle-orm";
+import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { works, books } from "../../schema";
-import {
-  getDb,
-  getCurrentTimestamp,
-  getUserIdFromRequest,
-  getUsernameFromRequest,
-} from "../utils/db";
+import { getDb, getCurrentTimestamp, getUserIdFromRequest } from "../utils/db";
 import { createWorkResponse } from "@project/shared/schemas/api/createWork";
 import { getWorksResponse } from "@project/shared/schemas/api/getWorks";
 import { getWorkByIdResponse } from "@project/shared/schemas/api/getWorkById";

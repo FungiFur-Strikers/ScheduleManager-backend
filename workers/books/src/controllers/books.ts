@@ -7,6 +7,12 @@ import {
   getUserIdFromRequest,
   getUsernameFromRequest,
 } from "../utils/db";
+import {
+  AppError,
+  NotFoundError,
+  AuthorizationError,
+  ValidationError,
+} from "@worker/common";
 import { createBookResponse } from "@project/shared/schemas/api/createBook";
 import { getBooksResponse } from "@project/shared/schemas/api/getBooks";
 import { getBookByIdResponse } from "@project/shared/schemas/api/getBookById";
@@ -54,7 +60,7 @@ export const createBook = async (c: Context) => {
     );
   } catch (error) {
     console.error("Error creating book:", error);
-return c.json({ error: "スケジュール帳の作成に失敗しました" }, 500);
+    throw new AppError("スケジュール帳の作成に失敗しました", 500);
   }
 };
 
@@ -65,7 +71,7 @@ export const updateBook = async (c: Context) => {
   const body = await c.req.json();
 
   if (isNaN(bookId)) {
-    return c.json({ error: "Invalid book ID" }, 400);
+    throw new ValidationError("無効なスケジュール帳IDです");
   }
 
   const userId = getUserIdFromRequest(c.req.raw);
@@ -78,12 +84,14 @@ export const updateBook = async (c: Context) => {
       .where(eq(books.bookId, bookId));
 
     if (!book) {
-      return c.json({ error: "Book not found" }, 404);
+      throw new NotFoundError("スケジュール帳が見つかりません");
     }
 
     // ユーザーIDの確認
     if (book.userId !== userId) {
-      return c.json({ error: "Unauthorized" }, 403);
+      throw new AuthorizationError(
+        "このスケジュール帳へのアクセス権限がありません"
+      );
     }
 
     const now = getCurrentTimestamp();
@@ -117,8 +125,11 @@ export const updateBook = async (c: Context) => {
       createUserId: updatedBook.createUserId,
     } as updateBookResponse);
   } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
     console.error("Error updating book:", error);
-    return c.json({ error: "Failed to update book" }, 500);
+    throw new AppError("スケジュール帳の更新に失敗しました", 500);
   }
 };
 
@@ -128,7 +139,7 @@ export const deleteBook = async (c: Context) => {
   const bookId = Number(c.req.param("bookId"));
 
   if (isNaN(bookId)) {
-    return c.json({ error: "Invalid book ID" }, 400);
+    throw new ValidationError("無効なスケジュール帳IDです");
   }
 
   const userId = getUserIdFromRequest(c.req.raw);
@@ -141,12 +152,14 @@ export const deleteBook = async (c: Context) => {
       .where(eq(books.bookId, bookId));
 
     if (!book) {
-      return c.json({ error: "Book not found" }, 404);
+      throw new NotFoundError("スケジュール帳が見つかりません");
     }
 
     // ユーザーIDの確認
     if (book.userId !== userId) {
-      return c.json({ error: "Unauthorized" }, 403);
+      throw new AuthorizationError(
+        "このスケジュール帳へのアクセス権限がありません"
+      );
     }
 
     const now = getCurrentTimestamp();
@@ -165,8 +178,11 @@ export const deleteBook = async (c: Context) => {
     // 204 No Content を返す
     return new Response(null, { status: 204 });
   } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
     console.error("Error deleting book:", error);
-    return c.json({ error: "Failed to delete book" }, 500);
+    throw new AppError("スケジュール帳の削除に失敗しました", 500);
   }
 };
 

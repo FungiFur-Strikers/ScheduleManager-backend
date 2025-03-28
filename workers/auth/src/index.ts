@@ -2,31 +2,24 @@ import { Hono } from "hono";
 import { drizzle } from "drizzle-orm/d1";
 import { zValidator } from "@hono/zod-validator";
 import {
-  signUpRequestSchema,
-  signUpResponse,
-} from "@project/shared/schemas/api/signUp";
-import {
-  signInRequestSchema,
-  signInResponse,
-} from "@project/shared/schemas/api/signIn";
-import {
-  refreshTokenRequestSchema,
-  refreshTokenResponse,
-} from "@project/shared/schemas/api/refreshToken";
-import { userUpdateRequestSchema } from "@project/shared/schemas/api/userUpdate";
-import {
   createRefreshToken,
   revokeRefreshToken,
   validateAndRefreshToken,
 } from "./utils/refreshToken";
 import { verifyPassword } from "./utils/password";
-import { AppContext, authMiddleware } from "./utils/auth";
+import { AuthBindings, authMiddleware } from "./utils/auth";
 import { UserService } from "./utils/user";
+import { AppContext } from "@worker/common";
+import {refreshTokenRequestSchema, refreshTokenResponse} from "@project/shared/schemas/api/refreshToken"
+import {signInRequestSchema, signInResponse} from "@project/shared/schemas/api/signIn"
+import {signUpRequestSchema, signUpResponse} from "@project/shared/schemas/api/signUp"
+import {userUpdateRequestSchema} from "@project/shared/schemas/api/userUpdate"
 
-const app = new Hono<AppContext>();
+// 型定義を共通モジュールから使用
+const app = new Hono<AppContext<AuthBindings>>();
 
 // 認証関連のエンドポイント
-const authApp = new Hono<AppContext>();
+const authApp = new Hono<AppContext<AuthBindings>>();
 
 authApp.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -59,6 +52,7 @@ authApp.post("/signin", zValidator("json", signInRequestSchema), async (c) => {
   }
 });
 
+// サインアップは認証が不要なので、authMiddlewareを適用しない
 authApp.post("/signup", zValidator("json", signUpRequestSchema), async (c) => {
   const db = drizzle(c.env.DB);
   const userService = new UserService(db);
@@ -123,7 +117,7 @@ authApp.post(
 );
 
 // ユーザー関連のエンドポイント
-const usersApp = new Hono<AppContext>();
+const usersApp = new Hono<AppContext<AuthBindings>>();
 
 // 認証が必要なエンドポイントにミドルウェアを適用
 usersApp.use("*", authMiddleware);
@@ -165,9 +159,9 @@ usersApp.put("/me", zValidator("json", userUpdateRequestSchema), async (c) => {
 
   const saltRounds = parseInt(c.env.SALT_ROUNDS, 10) || 10;
   const updatedUser = await userService.updateUser(jwtPayload.userId, {
-    username: body.username,
-    email: body.email,
-    password: body.password,
+    username: body.username || existingUser.username,
+    email: body.email || existingUser.email,
+    password: body.password || existingUser.password,
     saltRounds: body.password ? saltRounds : undefined,
   });
 
